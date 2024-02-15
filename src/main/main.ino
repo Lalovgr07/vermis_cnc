@@ -1,6 +1,7 @@
 #define PIN_VRx A0
 #define PIN_VRy A1
 #define PIN_SW 2
+#define PIN_RELAY 12
 #include <Stepper.h>
 
 const int stepsPerRevolution = 200; 
@@ -23,6 +24,7 @@ void setup() {
     myStepperY.setSpeed(motorSpeed);
 
     pinMode( PIN_SW, INPUT_PULLUP );
+    pinMode( PIN_RELAY, OUTPUT );
 
 }
 
@@ -50,8 +52,17 @@ void loop() {
      Serial.print( digitalRead(PIN_SW) );
      Serial.println();
      
-     delay(50);
-     
+    
+
+     digitalWrite(PIN_RELAY, digitalRead(PIN_SW));
+
+     /*int fc1 = digitalRead(PIN_SW);
+     int rele; 
+     if (fc1 == 1){
+      rele = 0;
+     } else {
+      rele = 1;
+     }*/
      
      /*if (stepsX == 0 && stepsX == -1 ){
       return;
@@ -69,4 +80,6 @@ void loop() {
      }
      }
      */
+     delay(50);
+
   }
