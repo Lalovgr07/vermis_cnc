@@ -2,6 +2,7 @@
 #define PIN_VRy A1
 #define PIN_SW 2
 #define PIN_RELAY 12
+#define PIN_FC1 3
 #include <Stepper.h>
 
 const int stepsPerRevolution = 200; 
@@ -17,7 +18,9 @@ int stepCount = 0;
 void setup() {
 
     Serial.begin(9600);
-    
+
+   
+
     int motorSpeed = 10;
     
     myStepperX.setSpeed(motorSpeed);
@@ -25,6 +28,7 @@ void setup() {
 
     pinMode( PIN_SW, INPUT_PULLUP );
     pinMode( PIN_RELAY, OUTPUT );
+    pinMode( PIN_FC1, INPUT );
 
 }
 
@@ -32,7 +36,9 @@ void loop() {
 
     int stepsX = map(analogRead(PIN_VRx), 0, 1023, -5, 5 );
     int stepsY = map(analogRead(PIN_VRy), 0, 1023, -5, 5 );
-
+    int button = digitalRead(PIN_SW);
+    int fc_now = digitalRead(PIN_FC1);
+    int fc_prev = 0;
     if (stepsX == -1 || stepsX == +1) {
         stepsX = 0;
     }
@@ -49,21 +55,25 @@ void loop() {
      Serial.print( "Y_ang:" );
      Serial.print(stepsY);
      Serial.print( " SW:");
-     Serial.print( digitalRead(PIN_SW) );
+     Serial.print( button );
      Serial.println();
+      
+    //Turn on second machine
      
-    
-
-     digitalWrite(PIN_RELAY, digitalRead(PIN_SW));
-
-     /*int fc1 = digitalRead(PIN_SW);
-     int rele; 
-     if (fc1 == 1){
-      rele = 0;
+     digitalWrite(PIN_RELAY, button);
+     int relay; 
+     if (button == 1 && fc_now == 0){
+        relay = 0;
      } else {
-      rele = 1;
-     }*/
+        relay = 1;
+     }
+     if (relay == 0 && fc_prev == 0 && fc_now == 1){
+        relay = 1;
+     }
+     fc_prev = fc_now;
+
      
+  
      /*if (stepsX == 0 && stepsX == -1 ){
       return;
      }
